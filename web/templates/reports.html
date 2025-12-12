@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Отчётность</h1>
+        <p class="page-subtitle">Генерация аналитических отчётов</p>
+    </div>
+    <div class="top-actions">
+        <a class="btn btn-ghost" href="/menu">← В главное меню</a>
+    </div>
+</div>
+
+<section class="panel">
+    {% if stage == 'setup' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Выбор параметров отчёта</h3>
+        <p class="scenario-sub">Подготовка набора данных для анализа</p>
+        <p class="scenario-sub" style="margin-top:-6px;color:#4b5563;">
+            Текущие параметры уровня: сложность {{ params.difficulty }}%, противников {{ params.enemies }}, награды {{ params.reward }}%
+        </p>
+
+        <form method="post" action="/reports/generate" class="report-form">
+            <p style="margin:0 0 10px;">Выберите метрики для включения в отчёт:</p>
+
+            {% for m in metrics %}
+            <label class="checkbox-row">
+                <input type="checkbox" checked>
+                <span>{{ m }}</span>
+            </label>
+            {% endfor %}
+
+            <p class="selected-counter">Выбрано метрик: {{ metrics|length }}</p>
+
+            <div class="footer-actions">
+                <button type="submit" class="btn btn-primary btn-wide">Сформировать отчёт</button>
+            </div>
+        </form>
+    </div>
+
+    {% elif stage == 'result' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Аналитический отчёт</h3>
+        <p class="scenario-sub">Дата создания: 22.11.2025</p>
+        <p class="scenario-sub" style="margin-top:-6px;color:#4b5563;">
+            Параметры расчёта: сложность {{ params.difficulty }}%, противников {{ params.enemies }}, награды {{ params.reward }}%
+        </p>
+
+        <div class="forecast-grid">
+            <div class="forecast-card">
+                <p class="forecast-label">Количество игроков</p>
+                <p class="forecast-value">{{ report.players }}</p>
+                <p class="forecast-delta positive">{{ report.players_delta }}</p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Процент прохождения</p>
+                <p class="forecast-value">{{ report.completion }}</p>
+                <p class="forecast-delta positive">{{ report.completion_delta }}</p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Среднее время</p>
+                <p class="forecast-value">{{ report.avg_time }}</p>
+                <p class="forecast-delta positive">{{ report.avg_time_delta }}</p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Доход</p>
+                <p class="forecast-value">{{ report.revenue }}</p>
+                <p class="forecast-delta positive">{{ report.revenue_delta }}</p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Нагрузка на сервер</p>
+                <p class="forecast-value">{{ report.server_load }}</p>
+                <p class="forecast-delta positive">на основе текущих параметров</p>
+            </div>
+        </div>
+
+        <div class="chart">
+            <p style="margin:0 0 12px;color:#e5e7eb;">Динамика показателей</p>
+            <div class="chart-bars">
+                <div class="chart-bar" style="height:82%;"></div>
+                <div class="chart-bar" style="height:75%;"></div>
+                <div class="chart-bar" style="height:70%;"></div>
+                <div class="chart-bar" style="height:88%;"></div>
+                <div class="chart-bar" style="height:92%;"></div>
+                <div class="chart-bar" style="height:66%;"></div>
+                <div class="chart-bar" style="height:90%;"></div>
+                <div class="chart-bar" style="height:78%;"></div>
+            </div>
+        </div>
+
+        <div class="footer-actions split">
+            <a href="/reports" class="btn btn-ghost">← Создать новый отчёт</a>
+            <a href="/menu" class="btn btn-primary">Выход в меню</a>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

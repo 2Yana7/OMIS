@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Мониторинг и анализ</h1>
+        <p class="page-subtitle">Анализ поведения игроков и игровых сценариев</p>
+        <div class="tabs">
+            <a href="/monitoring" class="tab {% if tab == 'scenarios' %}active{% endif %}">Игровые сценарии</a>
+            <a href="/monitoring/problems" class="tab {% if tab == 'problems' %}active{% endif %}">Анализ проблем</a>
+        </div>
+    </div>
+    <div class="top-actions">
+        <a class="btn btn-ghost" href="/menu">← В главное меню</a>
+    </div>
+</div>
+
+<section class="panel">
+    {% if tab == 'scenarios' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Список игровых сценариев</h3>
+        <p class="scenario-sub">Визуализация метрик активности игроков</p>
+
+        <div class="scenario-list">
+            {% for s in scenarios %}
+            <article class="scenario-card">
+                <div>
+                    <h4>{{ s.name }}</h4>
+                    <div class="scenario-metrics">
+                        <span>👥 {{ s.players }} игроков</span>
+                        <span>📈 {{ s.completion }}% завершено</span>
+                    </div>
+                </div>
+                <div class="scenario-tag danger">
+                    {{ s.problems }} проблем{{ "а" if s.problems == 1 else ("ы" if s.problems in [2,3,4] else "") }}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif tab == 'problems' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Анализ узких мест</h3>
+        <p class="scenario-sub">Визуализация найденных проблем</p>
+
+        <div class="scenario-list">
+            {% for p in problems %}
+            <article class="scenario-card">
+                <div>
+                    <h4>{{ p.title }}</h4>
+                    <p style="margin:0;color:#cbd5e1;">{{ p.description }}</p>
+                </div>
+                <div class="scenario-tag">{{ p.tag }}</div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

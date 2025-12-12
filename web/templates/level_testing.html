@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Тестирование уровней</h1>
+        <p class="page-subtitle">Редактирование параметров и прогнозирование нагрузки</p>
+        <div class="tabs">
+            <a href="/level-testing" class="tab {% if tab == 'edit' %}active{% endif %}">Редактирование</a>
+            <a href="/level-testing/forecast" class="tab {% if tab == 'forecast' %}active{% endif %}">Прогноз нагрузки</a>
+            <a href="/level-testing/recommendations" class="tab {% if tab == 'recs' %}active{% endif %}">Рекомендации</a>
+        </div>
+    </div>
+    <div class="top-actions">
+        <a class="btn btn-ghost" href="/menu">← В главное меню</a>
+    </div>
+</div>
+
+<section class="panel">
+    {% if tab == 'edit' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Настройки уровня</h3>
+        <p class="scenario-sub">Редактирование параметров игрового уровня</p>
+
+        <form method="post" action="/level-testing/forecast">
+            <div class="slider-group">
+                <div class="slider-row">
+                    <label for="difficulty">Уровень сложности: <span id="difficultyValue">50%</span></label>
+                    <input id="difficulty" name="difficulty" class="slider" type="range" min="0" max="100" value="50">
+                </div>
+                <div class="slider-row">
+                    <label for="enemies">Количество противников: <span id="enemiesValue">10</span></label>
+                    <input id="enemies" name="enemies" class="slider" type="range" min="0" max="50" value="10">
+                </div>
+                <div class="slider-row">
+                    <label for="reward">Множитель наград: <span id="rewardValue">100%</span></label>
+                    <input id="reward" name="reward" class="slider" type="range" min="50" max="150" value="100">
+                </div>
+            </div>
+
+            <div class="footer-actions">
+                <button type="submit" class="btn btn-primary btn-wide">Рассчитать прогноз</button>
+            </div>
+        </form>
+    </div>
+
+    {% elif tab == 'forecast' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Прогноз нагрузки</h3>
+        <p class="scenario-sub">Расчёт прогноза на основе текущих параметров</p>
+
+        {% if forecast_obj %}
+        <div class="forecast-grid">
+            <div class="forecast-card">
+                <p class="forecast-label">Ожидаемое количество игроков</p>
+                <p class="forecast-value">{{ preview.expected_players }}</p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Процент прохождения</p>
+                <p class="forecast-value">
+                    {% if forecast_obj %}
+                        {{ (forecast_obj.passability_score * 100) | round(1) }}%
+                    {% else %}
+                        {{ preview.completion }}%
+                    {% endif %}
+                </p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Среднее время (мин)</p>
+                <p class="forecast-value">{{ preview.avg_time }}</p>
+            </div>
+            <div class="forecast-card">
+                <p class="forecast-label">Нагрузка на сервер</p>
+                <p class="forecast-value">{{ preview.server_load }}</p>
+            </div>
+        </div>
+
+        <div class="chips-row">
+            <span class="chip">Оптимальные параметры</span>
+            <span class="chip">Небольшая нагрузка на сервер</span>
+        </div>
+
+        {% if report %}
+        <h4 style="color:#111827;margin-top:18px;">Краткий отчёт</h4>
+        <pre class="log-block">{{ report.content }}</pre>
+        {% endif %}
+
+        {% if log %}
+        <h4 style="color:#111827;">Журнал операций</h4>
+        <pre class="log-block">
+{% for e in log %}
+[{{ e.timestamp.strftime("%H:%M:%S") }}] {{ e.level }}: {{ e.message }}
+{% endfor %}
+        </pre>
+        {% endif %}
+
+        {% else %}
+            <p>Прогноз пока не рассчитан. Вернитесь на вкладку «Редактирование» и запустите расчёт.</p>
+        {% endif %}
+
+        <div class="footer-actions">
+            <a href="/level-testing/recommendations" class="btn btn-primary btn-wide">Получить рекомендации по оптимизации</a>
+        </div>
+    </div>
+
+    {% elif tab == 'recs' %}
+    <div class="scenario-section">
+        <h3 class="scenario-title">Рекомендации по оптимизации</h3>
+        <p class="scenario-sub">Варианты улучшения игрового баланса</p>
+
+        {% if message %}
+        <div style="margin-bottom:12px;padding:10px 12px;border-radius:10px;background:#ecfeff;color:#083344;border:1px solid #cffafe;">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <div class="scenario-list">
+            {% for r in recs %}
+            <article class="recommendation-card">
+                <div>
+                    <h4>{{ r.title }}</h4>
+                    <p>{{ r.effect }}</p>
+                </div>
+                <form method="post" action="/level-testing/recommendations">
+                    <input type="hidden" name="action" value="{{ r.key }}">
+                    <button type="submit" class="btn btn-secondary">Применить</button>
+                </form>
+            </article>
+            {% endfor %}
+        </div>
+
+        <div class="footer-actions">
+            <a href="/level-testing" class="btn btn-ghost btn-wide">← Вернуться к редактированию</a>
+        </div>
+    </div>
+    {% endif %}
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const map = [
+    {id:'difficulty', label:'difficultyValue', suffix:'%'},
+    {id:'enemies', label:'enemiesValue', suffix:''},
+    {id:'reward', label:'rewardValue', suffix:'%'},
+  ];
+  map.forEach(({id,label,suffix}) => {
+    const input = document.getElementById(id);
+    const out = document.getElementById(label);
+    if(!input || !out) return;
+    const sync = () => { out.textContent = `${input.value}${suffix}`; };
+    input.addEventListener('input', sync);
+    sync();
+  });
+});
+</script>
+{% endblock %}

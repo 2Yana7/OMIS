@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Авторизация</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-bg"></div>
+
+  <main class="auth-center">
+    <section class="auth-card" role="dialog" aria-label="Авторизация">
+      <h1 class="auth-title">Авторизация</h1>
+      <p class="auth-subtitle">Введите логин и пароль для доступа к системе</p>
+
+      {% if error %}
+        <div class="auth-error">{{ error }}</div>
+      {% endif %}
+
+      <form class="auth-form" method="post" action="/login">
+        <div class="auth-field">
+          <label class="auth-label" for="username">Логин</label>
+          <input
+            id="username"
+            class="auth-input"
+            type="text"
+            name="username"
+            placeholder="Введите логин"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="password">Пароль</label>
+          <input
+            id="password"
+            class="auth-input"
+            type="password"
+            name="password"
+            placeholder="Введите пароль"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="auth-actions">
+          <button class="btn btn-primary auth-main" type="submit">
+            <span class="btn-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M10 8l4 4-4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 12h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M14 4h6v16h-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+              </svg>
+            </span>
+            <span>Войти</span>
+          </button>
+
+          <a class="btn btn-secondary auth-cancel" href="/logout">
+            <span class="btn-icon btn-icon-secondary" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 7l10 10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M17 7L7 17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span>Отмена</span>
+          </a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+</body>
+</html>
