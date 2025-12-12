@@ -10,16 +10,7 @@ from .journal import JournalManager
 
 
 class InterfaceController:
-    """
-    «КонтроллерИнтерфейса».
-
-    Представляет интерфейсную подсистему на уровне логики (без GUI).
-    Методы диаграммы:
-        - показатьСценарии()
-        - показатьРезультаты()
-        - обновитьИнтерфейс()
-        - обработатьВыборПользователя()
-    """
+  
 
     def __init__(
         self,
@@ -35,11 +26,7 @@ class InterfaceController:
         self._last_results: List[Report] = []
 
     def show_scenarios(self) -> List[str]:
-        """
-        показатьСценарии()
-
-        Возвращает список доступных сценариев использования платформы.
-        """
+    
         scenarios = [
             "monitoring",          # сценарий мониторинга
             "level_testing",       # тестирование уровня
@@ -52,11 +39,7 @@ class InterfaceController:
         return scenarios
 
     def show_results(self) -> List[Report]:
-        """
-        показатьРезультаты()
-
-        Возвращает список последних сформированных отчётов.
-        """
+      
         self._journal.add_entry(
             f"Запрошены результаты: {len(self._last_results)} отчётов",
             level="INFO",
@@ -64,23 +47,11 @@ class InterfaceController:
         return list(self._last_results)
 
     def update_interface(self) -> None:
-        """
-        обновитьИнтерфейс()
-
-        Заглушка для обновления визуальной части интерфейса.
-        Здесь просто пишем запись в журнал.
-        """
+     
         self._journal.add_entry("Интерфейс обновлён", level="INFO")
 
     def handle_user_choice(self, scenario: str, level_id: Optional[int] = None) -> None:
-        """
-        обработатьВыборПользователя()
-
-        Реализует простую логику:
-            - пользователь выбирает сценарий,
-            - при необходимости выбирается уровень,
-            - запускается анализ/прогноз/формирование отчёта.
-        """
+      
         self._journal.add_entry(
             f"Выбран сценарий '{scenario}' (уровень={level_id})",
             level="INFO",
@@ -98,7 +69,6 @@ class InterfaceController:
                 )
                 return
 
-            # Анализ → прогноз → отчёт
             self._analysis.analyze_data(level)
             forecast = self._analysis.create_forecast(level)
             report = self._decision.form_report(forecast, author="designer")
@@ -111,7 +81,6 @@ class InterfaceController:
             )
 
         elif scenario == "monitoring":
-            # В простом варианте только логируем выбор.
             self._journal.add_entry("Сценарий мониторинга активирован", level="INFO")
 
         elif scenario == "historical_analysis":
