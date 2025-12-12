@@ -21,14 +21,7 @@ from .container import DependencyContainer
 
 
 class RepositoryFactory:
-    """
-    «ФабрикаРепозиториев» с диаграммы.
-
-    Методы:
-        - создать(тип): object
-        - переключить()   (упрощённо: можно было бы менять реализации)
-        - проверитьСвязи()
-    """
+  
 
     def __init__(self, container: DependencyContainer) -> None:
         self._container = container
@@ -41,7 +34,6 @@ class RepositoryFactory:
         }
 
     def create(self, key: str) -> Any:
-        """создать(тип): object"""
         if key not in self._repo_types:
             raise KeyError(f"Неизвестный тип репозитория: {key}")
         repo = self._repo_types[key]()
@@ -49,11 +41,9 @@ class RepositoryFactory:
         return repo
 
     def switch(self, key: str, new_repo: Any) -> None:
-        """переключить() — заменить реализацию репозитория"""
         self._container.register(f"repo:{key}", new_repo)
 
     def check_links(self) -> bool:
-        """проверитьСвязи() — простая проверка наличия основных репозиториев"""
         required = ["sensor", "level", "storage", "forecast", "report"]
         for r in required:
             if f"repo:{r}" not in self._container._instances:
@@ -62,21 +52,13 @@ class RepositoryFactory:
 
 
 class ControllerFactory:
-    """
-    «ФабрикаКонтроллеров» с диаграммы.
-
-    Методы:
-        - создать(тип): object
-        - получитьСписок()
-        - пересоздатьКонтроллер(тип)
-    """
+ 
 
     def __init__(self, container: DependencyContainer) -> None:
         self._container = container
         self._controllers: Dict[str, Any] = {}
 
     def create(self, key: str) -> Any:
-        """создать(тип): object"""
         if key in self._controllers:
             return self._controllers[key]
 
@@ -117,11 +99,9 @@ class ControllerFactory:
         return ctrl
 
     def get_list(self) -> Dict[str, Any]:
-        """получитьСписок() — уже созданные контроллеры"""
         return dict(self._controllers)
 
     def recreate(self, key: str) -> Any:
-        """пересоздатьКонтроллер(тип)"""
         if key in self._controllers:
             del self._controllers[key]
         return self.create(key)
