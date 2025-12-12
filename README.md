@@ -10,7 +10,7 @@
 
 ## Требования
 - Python 3.11+.
-- Зависимости: `fastapi`, `uvicorn`, `jinja2` (можно установить через pip).
+- Зависимости: `fastapi`, `uvicorn`, `jinja2`
 
 ## Установка
 ```bash
@@ -24,7 +24,7 @@ pip install --upgrade pip
 pip install fastapi uvicorn jinja2
 ```
 
-## Запуск ядра (CLI-сценарий)
+## Запуск 
 Запускает демонстрационный сценарий из диаграммы последовательности и выводит журнал:
 ```bash
 python application.py
