@@ -8,14 +8,7 @@ from controllers import InterfaceController, LevelManager, JournalManager
 
 
 class View(ABC):
-    """
-    Базовый интерфейс «Представление» с диаграммы.
-
-    Методы:
-        - показать()
-        - обновить()
-        - скрыть()
-    """
+    
 
     def __init__(self, journal: JournalManager) -> None:
         self._visible: bool = False
@@ -30,7 +23,6 @@ class View(ABC):
         ...
 
     def hide(self) -> None:
-        """скрыть()"""
         self._visible = False
         self._journal.add_entry(
             f"{self.__class__.__name__} скрыто",
@@ -39,14 +31,7 @@ class View(ABC):
 
 
 class LevelsView(View):
-    """
-    «ПредставлениеУровней» с диаграммы.
 
-    Методы:
-        - отобразитьСписокУровней(список)
-        - показатьДеталиУровней()
-        - создатьНовыйУровень()
-    """
 
     def __init__(self, level_manager: LevelManager, journal: JournalManager) -> None:
         super().__init__(journal)
@@ -66,13 +51,11 @@ class LevelsView(View):
         self._journal.add_entry("Список уровней обновлён", level="INFO")
 
     def display_levels(self) -> List[Level]:
-        """отобразитьСписокУровней(список)"""
         if not self._visible:
             self.show()
         return list(self._cached_levels)
 
     def show_level_details(self, level_id: int) -> Level | None:
-        """показатьДеталиУровней()"""
         for lvl in self._cached_levels:
             if lvl.level_id == level_id:
                 self._journal.add_entry(
@@ -87,7 +70,6 @@ class LevelsView(View):
         return None
 
     def create_new_level(self, data: dict) -> Level:
-        """создатьНовыйУровень()"""
         level = self._level_manager.create_level(data)
         self.update()
         self._journal.add_entry(
@@ -98,13 +80,7 @@ class LevelsView(View):
 
 
 class RecommendationsView(View):
-    """
-    «ПредставлениеРекомендаций» с диаграммы.
-
-    Методы:
-        - показатьРекомендации(текст: string)
-        - обновитьСоветы()
-    """
+  
 
     def __init__(self, journal: JournalManager) -> None:
         super().__init__(journal)
@@ -121,7 +97,6 @@ class RecommendationsView(View):
         )
 
     def show_recommendations(self, text: str) -> None:
-        """показатьРекомендации(текст: string)"""
         self._last_text = text
         if not self._visible:
             self.show()
@@ -131,18 +106,11 @@ class RecommendationsView(View):
         )
 
     def refresh_tips(self) -> None:
-        """обновитьСоветы()"""
         self.update()
 
 
 class ReportsView(View):
-    """
-    «ПредставлениеОтчётов» с диаграммы.
-
-    Методы:
-        - показатьОтчёт(отчёт: Отчёт)
-        - экспортироватьОтчёт()
-    """
+   
 
     def __init__(self, interface_controller: InterfaceController, journal: JournalManager) -> None:
         super().__init__(journal)
@@ -166,7 +134,6 @@ class ReportsView(View):
         self._journal.add_entry("Список отчётов обновлён", level="INFO")
 
     def show_report(self, report: Report) -> None:
-        """показатьОтчёт(отчёт: Отчёт)"""
         self._last_report = report
         if not self._visible:
             self.show()
@@ -176,7 +143,6 @@ class ReportsView(View):
         )
 
     def export_report(self, fmt: str = "txt") -> str:
-        """экспортироватьОтчёт()"""
         if self._last_report is None:
             self._journal.add_entry(
                 "Экспорт отчёта невозможен: отчёт не выбран",
