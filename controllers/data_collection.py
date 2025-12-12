@@ -8,16 +8,7 @@ from .journal import JournalManager
 
 
 class DataCollectionController:
-    """
-    «КонтроллерСбораДанных».
 
-    Работает с сенсорами и подсистемой хранения.
-    Методы диаграммы:
-        - инициализироватьСенсоры()
-        - собратьДанные(идУровня: int)
-        - обработатьСобытие(событие)
-        - завершитьСбор()
-    """
 
     def __init__(
         self,
@@ -31,22 +22,12 @@ class DataCollectionController:
         self._active: bool = False
 
     def initialize_sensors(self) -> None:
-        """
-        инициализироватьСенсоры()
-
-        В реальной системе здесь могла бы быть инициализация подключений.
-        Сейчас просто помечаем сбор как активный и пишем в журнал.
-        """
+      
         self._active = True
         self._journal.add_entry("Сенсоры инициализированы", level="INFO")
 
     def collect_data(self, level_id: Optional[int] = None) -> None:
-        """
-        собратьДанные(идУровня: int)
-
-        Проходит по всем сенсорам, считывает значения и добавляет записи
-        в хранилище. Ид уровня может использоваться для пометок/фильтрации.
-        """
+     
         if not self._active:
             self._journal.add_entry(
                 "Попытка сбора данных при неинициализированных сенсорах",
@@ -66,19 +47,10 @@ class DataCollectionController:
         self._journal.add_entry("Сбор данных с сенсоров завершён", level="INFO")
 
     def handle_event(self, event: str) -> None:
-        """
-        обработатьСобытие(событие)
-
-        Заглушка для обработки произвольных событий:
-        просто записывает событие в журнал.
-        """
+       
         self._journal.add_entry(f"Событие: {event}", level="INFO")
 
     def finish_collection(self) -> None:
-        """
-        завершитьСбор()
-
-        Завершает текущую сессию сбора данных.
-        """
+     
         self._active = False
         self._journal.add_entry("Сбор данных остановлен", level="INFO")
