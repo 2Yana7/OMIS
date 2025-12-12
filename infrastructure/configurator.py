@@ -9,23 +9,14 @@ from .factories import RepositoryFactory, ControllerFactory
 
 
 class SystemConfigurator:
-    """
-    «КонфигураторСистемы» с диаграммы.
 
-    Методы:
-        - настроить(контейнер: КонтейнерЗависимостей)
-        - проверитьКонфигурацию()
-        - загрузитьПараметры()
-    """
 
     def __init__(self) -> None:
         self._repo_factory: RepositoryFactory | None = None
         self._ctrl_factory: ControllerFactory | None = None
 
     def configure(self, container: DependencyContainer) -> None:
-        """настроить(контейнер)"""
 
-        # Базовые сервисы
         journal = JournalManager()
         container.register(JournalManager, journal)
 
@@ -49,22 +40,15 @@ class SystemConfigurator:
         ctrl_factory = ControllerFactory(container)
         self._ctrl_factory = ctrl_factory
 
-        # На всякий случай создадим контроллер интерфейса сразу
         ctrl_factory.create("interface")
 
     def check_configuration(self, container: DependencyContainer) -> bool:
-        """проверитьКонфигурацию()"""
         if self._repo_factory is None:
             return False
         return self._repo_factory.check_links()
 
     def load_parameters(self, container: DependencyContainer) -> None:
-        """
-        загрузитьПараметры()
-
-        Заглушка для загрузки настроек из файла/окружения.
-        Сейчас просто пишет запись в журнал.
-        """
+  
         journal: JournalManager = container.resolve(JournalManager)
         journal.add_entry("Параметры системы загружены (заглушка)", level="INFO")
 
